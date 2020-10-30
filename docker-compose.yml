@@ -1,0 +1,84 @@
+version: '3.3'
+
+services:
+
+ Discovery-Service:
+  build: ./discovery-service
+  image: discovery-service
+  ports:
+   - "8761:8761"
+  networks:
+   - spring-reactive-cloud-gateway
+  tty:
+    true
+  restart:
+    unless-stopped
+ 
+
+    
+ account-service:
+  build: ./account-service 
+  image: account-service
+  ports:
+   - "2221-2223:2222"
+  networks:
+   - spring-reactive-cloud-gateway
+  environment:
+   - REGISTRY_HOST=Discovery-Service
+   - MONGODB_URI=mongo
+  tty:
+    true
+  restart:
+    unless-stopped 
+    
+    
+ customer-service:
+  build: ./customer-service 
+  image: customer-service
+  ports:
+   - "3333:3333"
+  networks:
+   - spring-reactive-cloud-gateway
+  environment:
+   - REGISTRY_HOST=Discovery-Service
+   - MONGODB_URI=mongo
+  tty:
+    true
+  restart:
+    unless-stopped 
+    
+    
+ gateway-service:
+  build: ./gateway-service 
+  image: gateway-service
+  ports:
+   - "8090:8090"
+  networks:
+   - spring-reactive-cloud-gateway
+  environment:
+   - REGISTRY_HOST=Discovery-Service
+  tty:
+    true
+  restart:
+    unless-stopped 
+    
+    
+ mongo:
+  image: mongo
+  ports:
+  - "27017:27017"
+  networks:
+  - spring-reactive-cloud-gateway
+  environment:
+   MONGO_INITDB_ROOT_USERNAME: root
+   MONGO_INITDB_ROOT_PASSWORD: example
+  tty:
+    true
+  restart:
+    unless-stopped 
+    
+
+    
+networks:
+  spring-reactive-cloud-gateway:
+    driver: bridge
