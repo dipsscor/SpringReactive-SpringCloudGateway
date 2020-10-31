@@ -42,7 +42,7 @@ public class CustomerController {
 	@GetMapping("/customer/{id}/with-accounts")
 	public Mono<Customer> findByIdWithAccounts(@PathVariable("id") String id) {
 		LOGGER.info("findByIdWithAccounts: id={}", id);
-		Flux<Account> accounts = webClientBuilder.build().get().uri("http://account-service//account/customer-Id/{customer}", id).retrieve().bodyToFlux(Account.class);		
+		Flux<Account> accounts = webClientBuilder.build().get().uri("http://account-service/account/customer-Id/{customer}", id).retrieve().bodyToFlux(Account.class);		
 		return accounts
 				.collectList()
 				.map(a -> new Customer(a))
